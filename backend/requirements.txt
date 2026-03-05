@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+python-multipart
+opencv-python-headless
+numpy
+face_recognition
+Pillow
+requests
+aiofiles
+sqlmodel
+passlib[bcrypt]
+python-jose[cryptography]

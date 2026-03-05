@@ -1,0 +1,228 @@
+{
+    "name": "CCTV Security Automation",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "minutes",
+                            "minutesInterval": 1
+                        }
+                    ]
+                }
+            },
+            "name": "Every Minute",
+            "type": "n8n-nodes-base.cron",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://localhost:8000/cameras",
+                "options": {}
+            },
+            "name": "Fetch Cameras",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 2,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "data"
+            },
+            "name": "Split Cameras",
+            "type": "n8n-nodes-base.itemLists",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{$json.rtsp_url}}",
+                "responseFormat": "file",
+                "options": {}
+            },
+            "name": "Get Snapshot",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 2,
+            "position": [
+                850,
+                300
+            ],
+            "notes": "In real usage, use a node that can snapshot RTSP or assume URL is HTTP Snapshot"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:8000/analyze",
+                "sendBinaryData": true,
+                "binaryPropertyName": "data:data",
+                "options": {
+                    "bodyContentType": "multipart-form-data"
+                },
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "camera_id",
+                            "value": "={{$node[\"Split Cameras\"].json[\"id\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Analyze API",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 2,
+            "position": [
+                1050,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "number": [
+                        {
+                            "value1": "={{$json.faces_found}}",
+                            "operation": "larger",
+                            "value2": 0
+                        }
+                    ]
+                }
+            },
+            "name": "Face Found?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "dataType": "string",
+                "value1": "={{$json.results[0].category}}",
+                "rules": {
+                    "rules": [
+                        {
+                            "value2": "Blacklist",
+                            "output": 0
+                        },
+                        {
+                            "value2": "VIP",
+                            "output": 1
+                        }
+                    ]
+                }
+            },
+            "name": "Category Router",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                1450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "subject": "⚠️ SECURITY ALERT: Blacklisted Person Detected",
+                "text": "Alert! A blacklisted person was detected on camera {{$node[\"Split Cameras\"].json[\"name\"]}}.\n\nConfidence: {{$json.results[0].confidence}}",
+                "toEmail": "security@company.com"
+            },
+            "name": "Email Alert",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                1650,
+                100
+            ]
+        }
+    ],
+    "connections": {
+        "Every Minute": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Cameras",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Cameras": {
+            "main": [
+                [
+                    {
+                        "node": "Split Cameras",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Cameras": {
+            "main": [
+                [
+                    {
+                        "node": "Get Snapshot",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Snapshot": {
+            "main": [
+                [
+                    {
+                        "node": "Analyze API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Analyze API": {
+            "main": [
+                [
+                    {
+                        "node": "Face Found?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Face Found?": {
+            "main": [
+                [
+                    {
+                        "node": "Category Router",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Category Router": {
+            "main": [
+                [
+                    {
+                        "node": "Email Alert",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
