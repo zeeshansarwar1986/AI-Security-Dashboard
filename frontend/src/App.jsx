@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen w-full bg-[#020408] text-slate-100 selection:bg-cyan-500/30 font-sans overflow-hidden">
+    <div className="flex flex-row h-screen w-full bg-[#020408] text-slate-100 selection:bg-cyan-500/30 font-sans overflow-hidden">
       {/* Sidebar - Fixed Width and Alignment */}
       <aside className="w-[300px] flex-shrink-0 flex flex-col glass-panel m-6 rounded-[2.5rem] overflow-hidden z-20 shadow-2xl border-white/5">
         <div className="p-10 flex items-center gap-5 border-b border-white/5 bg-white/[0.02]">
@@ -67,7 +67,7 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 mr-6 my-6 overflow-hidden">
+      <main className="flex-1 w-0 flex flex-col min-w-0 mr-6 my-6 overflow-hidden">
         {/* Header Bar */}
         <header className="h-24 glass-panel rounded-[2.5rem] flex items-center justify-between px-10 mb-6 flex-shrink-0 shadow-2xl border-white/5">
           <div className="flex flex-col">
