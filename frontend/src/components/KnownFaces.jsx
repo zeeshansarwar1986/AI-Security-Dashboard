@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Trash2, UserCheck, CheckCircle2 } from 'lucide-react';
+import { Upload, Trash2, UserCheck, CheckCircle2, Users } from 'lucide-react';
 
 const KnownFaces = () => {
     const [faces, setFaces] = useState([]);

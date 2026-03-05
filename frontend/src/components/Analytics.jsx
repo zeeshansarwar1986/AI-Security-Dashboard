@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
+import { Activity, Users, Shield, Radio, BarChart3 } from 'lucide-react';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
@@ -15,8 +16,17 @@ const Analytics = () => {
                 const res = await fetch('http://localhost:8000/analytics', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (res.ok) setData(await res.json());
-            } catch (e) { console.error(e) }
+                if (res.ok) {
+                    const json = await res.json();
+                    setData(json);
+                } else {
+                    // Fallback to empty stats if unauthorized or error
+                    setData({ total_events: 0, by_category: { 'Known': 0, 'Unknown': 0 } });
+                }
+            } catch (e) {
+                console.error(e);
+                setData({ total_events: 0, by_category: { 'Known': 0, 'Unknown': 0 } });
+            }
         };
         fetchData();
     }, []);

@@ -3,13 +3,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState("dummy_token_for_demo");
+    const [token, setToken] = useState(localStorage.getItem('token') || "dummy_token_for_demo");
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         if (token) {
             localStorage.setItem('token', token);
-            // Verify/fetch user info could go here
         } else {
             localStorage.removeItem('token');
         }

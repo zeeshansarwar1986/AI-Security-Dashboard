@@ -52,4 +52,4 @@
 
 ---
 
-*Developed with ❤️ by Antigravity for Zeeshan.*
+*Developed with ❤️ by ntigravity for Zeeshan.*
