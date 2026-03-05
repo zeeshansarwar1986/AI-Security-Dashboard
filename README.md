@@ -17,6 +17,14 @@
 
 ---
 
+## 📸 Screenshots
+
+![Dashboard](docs/screenshots/dashboard.png)
+![Identities](docs/screenshots/identities.png)
+![Analytics](docs/screenshots/analytics.png)
+
+---
+
 ## 🇬🇧 English Description
 
 ### Core Features
